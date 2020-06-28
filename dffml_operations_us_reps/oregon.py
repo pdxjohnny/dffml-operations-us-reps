@@ -2,7 +2,8 @@ import json
 
 import aiohttp
 
-from dffml import op, Definition, Stage
+from dffml.df.types import Definition, Stage
+from dffml.df.base import op
 
 # Not sure what this is, maybe an API key? Funny thing is its posted to both
 # arcgis API and Oregon's API
