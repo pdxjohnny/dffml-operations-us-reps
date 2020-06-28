@@ -1,0 +1,3 @@
+dffml-service-http
+dffml-config-yaml
+aiohttp>=3.6.2

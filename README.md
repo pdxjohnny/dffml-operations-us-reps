@@ -26,6 +26,19 @@ $ dffml dataflow create usreps.or_address_to_cords usreps.or_find_reps get_singl
 ]
 ```
 
+## HTTP Deployment DataFlow
+
+```console
+$ dffml dataflow create \
+    usreps.or_address_to_cords \
+    usreps.or_find_reps \
+    get_single \
+  -seed \
+    usreps.or_find_reps.outputs.result,usreps.or_address_to_cords.outputs.result=get_single_spec \
+  -configloader yaml |
+  tee dffml_operations_us_reps/deploy/df/reps.yaml
+```
+
 ## License
 
 DFFML dffml-operations-us-reps is distributed under the [MIT License](LICENSE).

@@ -1,0 +1,58 @@
+definitions:
+  get_single_output:
+    name: get_single_output
+    primitive: map
+  get_single_spec:
+    name: get_single_spec
+    primitive: array
+  usreps.or_address_to_cords.inputs.address:
+    name: usreps.or_address_to_cords.inputs.address
+    primitive: str
+  usreps.or_address_to_cords.outputs.result:
+    name: usreps.or_address_to_cords.outputs.result
+    primitive: map
+  usreps.or_find_reps.outputs.result:
+    name: usreps.or_find_reps.outputs.result
+    primitive: map
+flow:
+  get_single:
+    inputs:
+      spec:
+      - seed
+  usreps.or_address_to_cords:
+    inputs:
+      address:
+      - seed
+  usreps.or_find_reps:
+    inputs:
+      cords:
+      - usreps.or_address_to_cords: result
+linked: true
+operations:
+  get_single:
+    inputs:
+      spec: get_single_spec
+    name: get_single
+    outputs:
+      output: get_single_output
+    stage: output
+  usreps.or_address_to_cords:
+    inputs:
+      address: usreps.or_address_to_cords.inputs.address
+    name: usreps.or_address_to_cords
+    outputs:
+      result: usreps.or_address_to_cords.outputs.result
+    stage: processing
+  usreps.or_find_reps:
+    inputs:
+      cords: usreps.or_address_to_cords.outputs.result
+    name: usreps.or_find_reps
+    outputs:
+      result: usreps.or_find_reps.outputs.result
+    stage: processing
+seed:
+- definition: get_single_spec
+  value:
+  - usreps.or_find_reps.outputs.result
+  - usreps.or_address_to_cords.outputs.result
+
