@@ -25,6 +25,8 @@ OR_ADDRESS_TO_CORDS_HEADERS = {
 
 
 @op(
+    inputs={"address": Definition("address", "string")},
+    outputs={"result": Definition("or_cords", "mapping")},
     imp_enter={
         "session": (lambda self: aiohttp.ClientSession(trust_env=True))
     },
@@ -54,12 +56,14 @@ async def or_address_to_cords(self, address: str) -> dict:
             return
         first = data["locations"][0]
         return {
-            "x_y": first["feature"]["geometry"],
-            "x_y_min_max": first["extent"],
-            "lat_lng": {
-                "lat": first["feature"]["attributes"]["Y"],
-                "lng": first["feature"]["attributes"]["X"],
-            },
+            "result": {
+                "x_y": first["feature"]["geometry"],
+                "x_y_min_max": first["extent"],
+                "lat_lng": {
+                    "lat": first["feature"]["attributes"]["Y"],
+                    "lng": first["feature"]["attributes"]["X"],
+                },
+            }
         }
 
 
@@ -79,6 +83,7 @@ OR_FIND_REPS_HEADERS = {
 
 @op(
     inputs={"cords": or_address_to_cords.op.outputs["result"]},
+    outputs={"result": Definition("or_reps", "mapping")},
     imp_enter={
         "session": (lambda self: aiohttp.ClientSession(trust_env=True))
     },
@@ -123,7 +128,9 @@ async def or_find_reps(self, cords: dict) -> dict:
         OR_FIND_REPS_URL, headers=OR_FIND_REPS_HEADERS, params=params
     ) as resp:  # skipcq: BAN-B310
         return {
-            person["attributes"]["Name"]: person["attributes"]["Email"]
-            for person in (await resp.json())["results"]
-            if person["attributes"]["Email"] not in [None, "Not Available"]
+            "result": {
+                person["attributes"]["Name"]: person["attributes"]["Email"]
+                for person in (await resp.json())["results"]
+                if person["attributes"]["Email"] not in [None, "Not Available"]
+            }
         }
